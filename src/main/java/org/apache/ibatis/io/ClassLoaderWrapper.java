@@ -15,6 +15,8 @@
  */
 package org.apache.ibatis.io;
 
+import tianjing.Read;
+
 import java.io.InputStream;
 import java.net.URL;
 
@@ -23,6 +25,9 @@ import java.net.URL;
  *
  * @author Clinton Begin
  */
+@Read(s = Read.Status.READING, postil = {
+  "包装了多个不同的类加载器，循环尝试获取类，目的是为了可以获取到类"
+})
 public class ClassLoaderWrapper {
 
   ClassLoader defaultClassLoader;
