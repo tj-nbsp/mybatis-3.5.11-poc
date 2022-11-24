@@ -25,6 +25,7 @@ import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
 import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
+import tianjing.Read;
 
 /**
  * @author Clinton Begin
@@ -57,6 +58,14 @@ public class MapperRegistry {
     return knownMappers.containsKey(type);
   }
 
+  @Read(s = Read.Status.READING, postil = {
+    "传入的 type 不是接口的话不做任何处理，可修改成 !type.isInterface() then return ;",
+    "传入的 type 如果在 knownMappers 中已经存在了，抛出异常",
+    "先将 type 与 new 出来的 MapperProxyFactory 放进 knownMappers 中",
+    "然后再做 type 的 Mapper annotation 解析, 上一步先放入 knownMappers 中",
+    "是鱿鱼在 parse 的过程中会加载 mapper 接口对应的 xml 再次做 hasMapper then addMapper 的逻辑",
+    "所以此处先将解析的 mapper 接口放到 knownMappers 中了，后续判断的时候就表示已经存在相同 type 不用重复 addMapper 导致报 BindException 错误。"
+  })
   public <T> void addMapper(Class<T> type) {
     if (type.isInterface()) {
       if (hasMapper(type)) {

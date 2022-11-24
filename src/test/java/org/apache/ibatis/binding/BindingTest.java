@@ -57,10 +57,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import tianjing.Read;
 
+@Read(s = Read.Status.READING)
 class BindingTest {
   private static SqlSessionFactory sqlSessionFactory;
 
+  @Read(s = Read.Status.HAVE_READ, postil = {
+    "1. 根据初始化脚本创建数据库并得到 DataSource",
+    "2. 使用 JdbcTransactionFactory 来创建管理事务的 JdbcTransaction 类",
+    "3. 通过 DataSource 和 JdbcTransactionFactory 来构造当前的数据库环境 Environment",
+    "4. 通过 Environment 创建得到 Configuration，这个类是框架的枢纽，所有的操作以及对象都直接或间接的存在于这个类的对象中",
+    "5. 给需要用到的实体类在框架中添加别名这样在 Mapper.xml 中就不需要写类的完全限定名了",
+    "6. 用 SqlSessionFactoryBuilder 快速构建出 SqlSessionFactory 对象"
+  })
   @BeforeAll
   static void setup() throws Exception {
     DataSource dataSource = BaseDataTest.createBlogDataSource();
@@ -79,6 +89,9 @@ class BindingTest {
     sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
   }
 
+  @Read(s = Read.Status.READING, postil = {
+    "博客对象中包括了作者的对象以及帖子的对象 List"
+  })
   @Test
   void shouldSelectBlogWithPostsUsingSubSelect() {
     try (SqlSession session = sqlSessionFactory.openSession()) {
