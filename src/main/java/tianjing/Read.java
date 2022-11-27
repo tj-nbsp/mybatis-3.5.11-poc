@@ -7,13 +7,13 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 public @interface Read {
 
   /**
    * 阅读状态
    */
-  Status s() default Status.UN_READ;
+  Status s() default Status.READING;
 
   /**
    * 批注

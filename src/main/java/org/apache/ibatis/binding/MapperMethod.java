@@ -37,6 +37,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
+import tianjing.Read;
 
 /**
  * @author Clinton Begin
@@ -44,6 +45,13 @@ import org.apache.ibatis.session.SqlSession;
  * @author Lasse Voss
  * @author Kazuki Shimizu
  */
+@Read(postil = {
+  "Mapper 接口中的每一个方法都有一个当前类的实例来描述",
+  "SqlCommand 有两个属性：",
+    "name：存放 MappedStatement 的 id属性，当通过 SqlSession 执行数据库操作的时候需要传递进去用于取 MappedStatement",
+    "type：存放 SqlCommandType 枚举类型，标识当前方法是未知，增，删，改，查，刷新之中的哪一个操作",
+  "MethodSignature 方法的签名信息，方法名称，入参，返回值类型等信息"
+})
 public class MapperMethod {
 
   private final SqlCommand command;
@@ -218,7 +226,13 @@ public class MapperMethod {
 
   public static class SqlCommand {
 
+    @Read(postil = {
+      "存放 MappedStatement 实例的 id 属性，标识当前的 Mapper Method 是依赖于哪一个 Mapper interface"
+    })
     private final String name;
+    @Read(postil = {
+      "标识当前的 Mapper Method 是一个什么类型的数据库操作，增、删、改、查中的哪一种"
+    })
     private final SqlCommandType type;
 
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {
@@ -251,6 +265,11 @@ public class MapperMethod {
       return type;
     }
 
+    @Read(postil = {
+      "从 Configuration 来读取当前代理的方法所属接口对应的 MappedStatement 实例，通过接口完全限定名.方法的名字 来获取",
+      "因为在 Configuration 中存的 MappedStatement 对象就是用 接口完全限定名.方法的名字 来存的，这算是约定好了的，此处拼接获取没有问题",
+      ""
+    })
     private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName,
         Class<?> declaringClass, Configuration configuration) {
       String statementId = mapperInterface.getName() + "." + methodName;
